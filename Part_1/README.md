@@ -2,18 +2,20 @@
 
 # Part 1
 
-## *What is clojure?*
+## Chapter 1
+
+###*What is clojure?*
 
 - Combines lisp, functional programming, with some unique qualities
 - 'Clojure' refers to the language and the compiler
 - Clojure is a *hosted* language.  This means that clojure programs are executed within a JVM and rely on the JVM for core features. (Implementations are available for Javascript amoung others)
 
-## Leiningen
+###Leiningen
 
 - Used to build and manage projects
 - Has a clojure REPL
 
-### Basic commands
+####Basic commands
 
 Creating a new project
 
@@ -56,3 +58,10 @@ clojure-noob.core=>(-main) # execute the main function
 # nil
 ```
 
+
+
+## Chapter 2
+
+## How to Use Emacs, an Excellent Clojure Editor (skipped)
+
+(I've decided to skip the emacs part of this chapter as I will be continuing to use VS Code and Vim as my main text editors).
