@@ -2,7 +2,7 @@
 
 # Part 1
 
-## Chapter 1
+## Chapter 1: Building, Running, and the REPL
 
 ###*What is clojure?*
 
@@ -60,8 +60,6 @@ clojure-noob.core=>(-main) # execute the main function
 
 
 
-## Chapter 2
-
-## How to Use Emacs, an Excellent Clojure Editor (skipped)
+## Chapter 2: How to Use Emacs, an Excellent Clojure Editor
 
 (I've decided to skip the emacs part of this chapter as I will be continuing to use VS Code and Vim as my main text editors).

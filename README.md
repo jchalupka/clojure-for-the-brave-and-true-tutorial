@@ -8,23 +8,23 @@ Read the tutorial online for free [here](https://www.braveclojure.com/clojure-fo
 
 Part 1: Environment Setup
 
-- [ ] Building, Running, and the REPL
-- [ ] How to use Emacs
+- [x] Chapter 1: Building, Running, and the REPL
+- [x] Chapter 2: How to use Emacs
 
 Part 2:
 
-- [ ] Do Things: A Clojure Crash Course
-- [ ] Core Functions in Depth
-- [ ] Functional Programming
-- [ ] Organizing Your Project
-- [ ] Clojure Alchemy: Reading, Evaluating, and Macros
-- [ ] Writing Macros
+- [ ] Chapter 3: Do Things: A Clojure Crash Course
+- [ ] Chapter 4: Core Functions in Depth
+- [ ] Chapter 5: Functional Programming
+- [ ] Chapter 6: Organizing Your Project
+- [ ] Chapter 7: Clojure Alchemy: Reading, Evaluating, and Macros
+- [ ] Chapter 8: Writing Macros
 
 Part 3:
 
-- [ ] Concurrent and Parallel Programming
-- [ ] Clojure Metaphysics: Atoms, Refs, Vars, and Cuddle Zombies
-- [ ] Master Concurrent Processes with core.async
-- [ ] Interacting with Java
-- [ ] Create and Extend Abstractions with Mutimethods, Protocols and Records
+- [ ] Chapter 9: Concurrent and Parallel Programming
+- [ ] Chapter 10: Clojure Metaphysics: Atoms, Refs, Vars, and Cuddle Zombies
+- [ ] Chapter 11: Master Concurrent Processes with core.async
+- [ ] Chapter 12: Interacting with Java
+- [ ] Chapter 13: Create and Extend Abstractions with Mutimethods, Protocols and Records
 
