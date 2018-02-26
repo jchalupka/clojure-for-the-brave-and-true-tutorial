@@ -13,7 +13,7 @@ Part 1: Environment Setup
 
 Part 2:
 
-- [ ] Chapter 3: Do Things: A Clojure Crash Course
+- [x] Chapter 3: Do Things: A Clojure Crash Course
 - [ ] Chapter 4: Core Functions in Depth
 - [ ] Chapter 5: Functional Programming
 - [ ] Chapter 6: Organizing Your Project
