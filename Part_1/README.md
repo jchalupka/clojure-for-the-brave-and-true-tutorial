@@ -4,18 +4,18 @@
 
 ## Chapter 1: Building, Running, and the REPL
 
-###*What is clojure?*
+### *What is clojure?*
 
 - Combines lisp, functional programming, with some unique qualities
 - 'Clojure' refers to the language and the compiler
 - Clojure is a *hosted* language.  This means that clojure programs are executed within a JVM and rely on the JVM for core features. (Implementations are available for Javascript amoung others)
 
-###Leiningen
+### Leiningen
 
 - Used to build and manage projects
 - Has a clojure REPL
 
-####Basic commands
+#### Basic commands
 
 Creating a new project
 
