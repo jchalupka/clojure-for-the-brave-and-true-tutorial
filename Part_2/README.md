@@ -706,7 +706,125 @@ Lists all of the built-in functions that operate on data-structures covered in t
 
 6. Create a function that generalizes `symmetrize-body-parts` and the function you created in Exercise 5. The new function should take a collection of body parts and the number of matching body parts to add. If you’re completely new to Lisp languages and functional programming, it probably won’t be obvious how to do this. If you get stuck, just move on to the next chapter and revisit the problem later.
 
-## Chapter 4
+## Chapter 4: Core Functions in Depth
+
+In this chapter we'll learn about Clojure's underlying concept of programming to abstractions.  As well we will learn about *lazy sequences*.
+
+### Treating lists, vectors, sets, and maps as sequences
+
+The term sequence refers to a collection of elements organized in a linear order (as apposed to an unordered collection or graph without a before and after relationship).
+
+Clojure is designed to allow us to think in abstract terms as much as possible, and it does this by implementing functions in terms of data structure abstractions.
+
+We will not use Javascript to implement a linked list:
+
+```javascript
+const node3 = {
+    value: 'last',
+    next: null
+}
+
+const node2 = {
+    value: 'middle',
+    next: node3
+}
+
+const node1 = {
+    value: 'first',
+    next: node2
+}
+
+// Now implement first, rest, and cons
+const first = (node) => node.value;
+
+const rest = (node) => node.next;
+
+const cons = (newValue, node) => ({
+   	value: newValue,
+    next: node
+});
+
+// We can now implement map in terms of first, rest, and cons
+const map = (list, transform) => {
+    if(list === null) {
+        return list;
+    } else {
+        // Transform the first element of the list and then calls itself again until it reaches the end.
+        return cons(transform(first(list)), map(rest(list), transform));
+    }
+}
+```
+
+Since first, rest, and cons are written in terms of Javascript's array functions and we implemented map in terms of first, rest, and cons, we get map for free for any data structure where we can implement first, rest, and cons.
+
+### Abstraction Through Inderection
+
+We're still left with how to implement first in terms of different data structures.  Clojure does this using two forms of inderection.  Inderection is what makes abstraciton possible.  
+
+Polymorphism is one way clojure provides inderection.  (Recall polymorphism is when different functions are used depending on the type of the arguments provided.)
+
+The other way is through lightweight type conversion, producing a data structure that works with an abstraction's functions. For example when you call map, first, rest or cons it calls seq on the data structure in question to obtain a data strucutre that allows for the function being applied.
+
+```clojure
+(seq '(1 2 3))
+; => (1 2 3)
+
+(seq [1 2 3])
+; => (1 2 3)
+
+(seq #{1 2 3})
+; => (1 2 3)
+
+(seq {:name "Bill Compton" :occupation "Dead mopey guy"})
+; => ([:name "Bill Compton"] [:occupation "Dead mopey guy"])
+```
+
+`seq` always returns a value that looks and behaves like a list (we call this value a sequence or seq). The seq of a map consists of two-element key-value vectors.  That's why `map` treats your maps like lists or vectors.   Note that we can convert back into a map using `(into {} (seq {:a 1 :b 2}))`.
+
+This introduces many more useful functions such as reduce, filter, distinct, group-by, and many more.
+
+### Seq Function Examples
+
+More ways to use map:
+
+```clojure
+(map str ["a" "b" "c"] ["A" "B" "C"])
+; ("aA" "bB" "cC")
+
+;equivalently
+(list (str "a" "A") (str "b" "B") (str "c" "C"))
+; ("aA" "bB" "cC")
+
+(def sum #(reduce + %))
+(def avg #(/ (sum %) (count %)))
+(defn stats
+  [numbers]
+  (map #(% numbers) [sum count avg])) ; collection of functions
+
+(stats [3 4 10])
+; (17 3 17/3)
+
+(stats [80 1 44 13 6])
+; (144 5 144/5)
+
+(def identities
+  [{:alias "Batman" :real "Bruce Wayne"}
+   {:alias "Spider-Man" :real "Peter Parker"}
+   {:alias "Santa" :real "Your mom"}
+   {:alias "Easter Bunny" :real "Your dad"}])
+
+(map :real identities)
+; ("Bruce Wayne" "Peter Parker" "Your mom" "Your dad")
+
+```
+
+More ways to use reduce:
+
+```
+
+```
+
+
 
 ## Chapter 5
 

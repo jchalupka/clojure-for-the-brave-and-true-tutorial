@@ -68,6 +68,6 @@
   "Expects a seq of maps that have a :name and :size and returns the body parts of a weird alien"
   [asym-body-parts]
   (reduce (fn 
-          [parts part]
-          (reduce (fn [parts part] (cons part parts)) parts (to-seq (matching-parts part (multiply-by 1)))))
+           [parts part]
+           (reduce (fn [parts part] (cons part parts)) parts (to-seq (matching-parts part (multiply-by 1)))))
     [] asym-body-parts))
