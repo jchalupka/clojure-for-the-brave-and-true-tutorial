@@ -1,3 +1,5 @@
+;; Answers to the chapter 3 exercises in Clojure for the Brave and True.
+
 ;; use the str, vector, hash-map, and hash-set functions.
 
 (str "hello" "World")
