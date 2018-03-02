@@ -873,7 +873,151 @@ Simply appends the members of one sequence to the end of another.
 
 ### Lazy seqs
 
+A lazy seq is a seq whose members aren't computed until you try to access them.  Computing a seq's members is called realizing the seq.
 
+```clojure
+(def vampire-database
+  {0 {:makes-blood-puns? false, :has-pulse? true  :name "McFishwich"}
+   1 {:makes-blood-puns? false, :has-pulse? true  :name "McMackson"}
+   2 {:makes-blood-puns? true,  :has-pulse? false :name "Damon Salvatore"}
+   3 {:makes-blood-puns? true,  :has-pulse? true  :name "Mickey Mouse"}})
+
+(defn vampire-related-details
+  [social-security-number]
+  (Thread/sleep 1000)
+  (get vampire-database social-security-number))
+
+(defn vampire?
+  [record]
+  (and (:makes-blood-puns? record)
+       (not (:has-pulse? record))
+       record))
+
+(defn identify-vampire
+  [social-security-numbers]
+  (first (filter vampire?
+                 (map vampire-related-details social-security-numbers))))
+```
+
+We can test out how long a function takes to run using time
+
+```clojure
+(time (some-function))
+"Elapsed time: 0.064909 msecs"
+```
+
+### Infinite sequences
+
+One easy way to create an infinite sequence is with repeat.  This function creates a sequence whose every member is the argument you pass:
+
+```clojure
+(concat (take 8 (repeat "na")) ["Batman!"])
+; ("na" "na" "na" "na" "na" "na" "na" "na" "Batman!")
+
+```
+
+We can also use repeatedly which will call the provided function to generate each element in the sequence.
+
+```clojure
+(take 3 (repeatedly (fn [] (rand-int 10))))
+; 1 4 0
+
+(def rand-numbers (repeatedly (fn [] (rand-int 10))))
+(take 3 rand-numbers)
+; 3 2 9
+(take 5 rand-number)
+; 3 2 9 1 3
+
+(defn even-numbers
+    ([] (even-numbers 0))
+    ([n] (cons n (lazy-seq (even-numbers (+ n 2))))))
+
+(take 3 (even-numbers))
+; 0 2 4 6 8
+```
+
+### The collection abstraction
+
+The collection abstraction is closely related to the sequence abstraction.  All of clojure's core data structures -vectors, maps, lists, and sets take part in both abstractions.
+
+The sequence abstractino is about operating on members individually, whereas the collection abstraction is about the data structure as a while.  For example the collection functions count, empty?, and every? arn't about any individual element; they're about the whole.
+
+### into vs conj
+
+One of the most important collection functions is into.  As we know many seq functions return a seq rather than the original data structure.  To conver the return value back into the original value we use into:
+
+``` clojure
+(map identity {:sublight-reaction "Glitter"})
+; ([:sunlight-reaction "Glitter!"])
+
+(into {} (map identity {:sunlight-reaction "Glitter!"}))
+; {:sunlight-reaction "Glitter!"}
+```
+
+The first argument of into does not have to be empty and can be used to add elements.
+
+Conj also adds elements to a collection, but it does it in a slightly different way:
+
+```clojure
+(conj [0] [1])
+; [0 [1]]
+
+(into [0] [1])
+; [0 1]
+
+(conj [0] 1)
+; [0 1]
+
+; this also works
+(conj [0] 1 2 3)
+; [0 1 2 3]
+```
+
+### Function functions
+
+#### apply
+
+Apply explodes a seqable data structure so it can be passed to a function that expects a rest parameter.  For example max:
+
+```clojure
+(max 0 1 2)
+; 2
+
+(max [0 1 2])
+; [0 1 2]
+
+(apply max [0 1 2])
+; 2
+
+(defn my-into
+	[target additions]
+	(apply conj target additions))
+(my-into [0] [1 2 3])
+; [0 1 2 3]
+```
+
+### partial
+
+Partial takes a function and any number of arguments.  It then returns a new function.  When you call the retuned function, it calls the original function with the original arguements you supplied along with new arguments.
+
+```clojure
+(def add10 (partial + 10))
+(add10 10)
+; 13
+
+(defn lousy-logger
+  [log-level message]
+  (condp = log-level
+    :warn (clojure.string/lower-case message)
+    :emergency (clojure.string/upper-case message)))
+
+(def warn (partial lousy-logger :warn))
+
+(warn "Red light ahead")
+; => "red light ahead"
+```
+
+Calling warn is identical to calling lousy-logger.
 
 ## Chapter 5
 
