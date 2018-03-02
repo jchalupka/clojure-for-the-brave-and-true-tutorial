@@ -841,7 +841,7 @@ More ways to use reduce:
 
 The takeaway is that reduce is more flexible than it first appears.  Whenever you want to derive a new value from a sequable data structure, reduce will usually be able to do what you need.
 
-###take, drop, take-while and drop-while
+### take, drop, take-while and drop-while
 
 take and drop both take two arguments: a number and a sequence.  take returns the first n elements of the sequence, whereas drop returns the sequence with the first n elements removed.
 
