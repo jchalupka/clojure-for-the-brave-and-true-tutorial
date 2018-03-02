@@ -820,9 +820,58 @@ More ways to use map:
 
 More ways to use reduce:
 
+```clojure
+; transform a map's values, producing a new map with the same keys but with updated values:
+(reduce (fn [new-map [key val]]
+            (assoc new-map key (inc val)))
+        {}
+        {:max 30 :min 10})
+; {:max 31 :min 11}
+
+;; filter out keys from a map based on their value
+(reduce (fn [new-map [key val]]
+            (if (> val 4)
+                (assoc new-map key val)
+                new-map))
+        {}
+        {:human 4.1
+         :critter 3.9})
+; {:human 4.1}
 ```
 
+The takeaway is that reduce is more flexible than it first appears.  Whenever you want to derive a new value from a sequable data structure, reduce will usually be able to do what you need.
+
+###take, drop, take-while and drop-while
+
+take and drop both take two arguments: a number and a sequence.  take returns the first n elements of the sequence, whereas drop returns the sequence with the first n elements removed.
+
+Related functions take-while and remove-while each take a *predicate function* (function whose return value is evaluated for truth or falsity) to determine when it should stop taking or dropping. 
+
+This is a useful alternative to filter when we do not want to process all of the data.
+
+The some function tests whether the predicate function is truthy for atleast one of the elements in the sequence.
+
+```clojure
+(some #(> (:critter %) 3) food-journal)
+; returns true or false
+
+(some #(and (> (:critter %) 3) %) food-journal)
+; returns the entry, instead of just true or false
 ```
+
+### Sort and sort-by
+
+sort works nicely for sorting elements in ascending order.  If you need somthing more complicated, you can use sort-by, which allows you to apply a function to the elements to determine the sort order.
+
+```clojure
+(sort-by count ["aaa" "c" "bb"])
+```
+
+### concat
+
+Simply appends the members of one sequence to the end of another.
+
+### Lazy seqs
 
 
 
