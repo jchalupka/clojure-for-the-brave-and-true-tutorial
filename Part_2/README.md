@@ -996,7 +996,7 @@ Apply explodes a seqable data structure so it can be passed to a function that e
 ; [0 1 2 3]
 ```
 
-### partial
+### Partial
 
 Partial takes a function and any number of arguments.  It then returns a new function.  When you call the retuned function, it calls the original function with the original arguements you supplied along with new arguments.
 
@@ -1018,6 +1018,40 @@ Partial takes a function and any number of arguments.  It then returns a new fun
 ```
 
 Calling warn is identical to calling lousy-logger.
+
+### Complement
+
+Before we wanted a function to find one element amid many elements.  Perhaps we want a function to find all elements with a desire property.
+
+```clojure
+(defn identify-humans
+	[social-security-numbers]
+	(filter #(not (vampire? #))
+		(map vampire-related-details social-security-numbers)))
+```
+
+If we look at the first argument to filter, #(not (vampire? %)) we can see it's common to want the complement (the negation) of a boolean function that there's a function complement for that.
+
+```clojure
+(defn not-vampire? (complement vampire?))
+(defn identify-humans
+	social-security-numbers]
+	(filter not-vampire?)
+		(map vampire-related-details social-security-numbers))))
+```
+
+### A Vampire Data Analyst Program
+
+The contents of this project can be found in the fwpd directory.
+
+### Exercises
+
+The vampire analysis program you now have is already decades ahead of anything else on the market. But how could you make it better? I suggest trying the following:
+
+1. Turn the result of your glitter filter into a list of names.
+2. Write a function, `append`, which will append a new suspect to your list of suspects.
+3. Write a function, `validate`, which will check that `:name` and `:glitter-index`are present when you `append`. The `validate` function should accept two arguments: a map of keywords to validating functions, similar to `conversions`, and the record to be validated.
+4. Write a function that will take your list of maps and convert it back to a CSV string. You’ll need to use the `clojure.string/join` function.
 
 ## Chapter 5
 
