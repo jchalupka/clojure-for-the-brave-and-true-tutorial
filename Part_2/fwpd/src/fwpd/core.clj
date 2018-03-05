@@ -1,4 +1,5 @@
-(ns fwpd.core)
+(ns fwpd.core
+  (:use clojure.pprint))
 (def filename "suspects.csv")
 
 (def vamp-keys [:name :glitter-index])
@@ -30,4 +31,9 @@
                 (map vector vamp-keys unmapped-row)))
        rows))
 
-(first (mapify (parse (slurp filename))))
+(defn glitter-filter
+  [minimum-glitter records]
+  (filter #(>= (:glitter-index %) minimum-glitter) records))
+
+
+(pprint (glitter-filter 3 (mapify (parse (slurp filename)))))
