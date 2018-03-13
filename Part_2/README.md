@@ -1053,7 +1053,45 @@ The vampire analysis program you now have is already decades ahead of anything e
 3. Write a function, `validate`, which will check that `:name` and `:glitter-index`are present when you `append`. The `validate` function should accept two arguments: a map of keywords to validating functions, similar to `conversions`, and the record to be validated.
 4. Write a function that will take your list of maps and convert it back to a CSV string. You’ll need to use the `clojure.string/join` function.
 
-## Chapter 5
+## Chapter 5 Functional Programming
+
+### Pure functions
+
+A pure function is one which has referential transparency and doesn't cause any side effects.  The qualities make it easier to reason about programs because the functions are completely isolated, unable to impact other parts of your system.
+
+In comparison to pure functions are functions which use random numbers, and or use input/output.
+
+#### Pure functions have no side effects
+
+A program has to have some side effects (or else it wouldn't do anything!).  However, side effects can be potentially harmful because they introduce uncertanty about what the names in your code are referring to.  This leads to situations where it's very difficult to trace why and how a name came to be associated with a value, making it hard to debug a program.
+
+To help promote ease of programming all of the core datastructures in clojure are immutable.
+
+### Recursive instead of for/while
+
+Since even a harmless for-loop involves mutation, we must resort to recursion.  The general approach to recurssive problem solving is:
+
+```clojure
+(defn sum
+    ([vals] (sum vals 0)) ; takes an argument [vals]
+   	([vals accumulating-total]
+    	(if (empty? vals)
+        accumulating-total
+        (sum (rest vals) (+ (first vals) accumulating-total)))))
+```
+
+Note that you should generally use recur when doing recursion for performance reasons.  The reason being is that clojure doesn't provide tail call optimization. (*http://en.wikipedia.org/wiki/Tail_call*).  So we should really use the following code:
+
+```clojure
+(defn sum
+    ([vals] (sum vals 0))
+    ([vals accumulating-total]
+     (if (empty? vals)
+         accumulating-total
+         (recur (rest vals) (+ (first vals) accumulating-total)))))
+```
+
+
 
 ## Chapter 6
 
