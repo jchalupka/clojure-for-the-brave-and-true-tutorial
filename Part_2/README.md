@@ -1091,6 +1091,71 @@ Note that you should generally use recur when doing recursion for performance re
          (recur (rest vals) (+ (first vals) accumulating-total)))))
 ```
 
+### Function composition instead of attribute mutation
+
+Another way we commonly use mutation is to build up the final state of an object.  We can do this in clojure as:
+
+```clojure
+(require `[clojure.string :as s])
+(defn clean
+    [text]
+    (s/replace (s/trim text) #"lol" "LOL"))
+
+(clean "  My boa constrictor is so sassy lol!  ");
+; "My boa constrictor is so sassy LOL!"
+```
+
+Combining functions so that the return value of one function is passed as an arguement to another is called function composition.
+
+### Cool things to do with pure functions
+
+#### comp
+
+It's always safe to compose pure functions because you only need to worry about their input/output relationship.  Composing functions is so common in fact that there is a function for it:
+
+```clojure
+((comp inc *) 2 3)
+; 7
+```
+
+And another example:
+
+```clojure
+(def character
+  {:name "Smooches McCutes"
+   :attributes {:intelligence 10
+                :strength 4
+                :dexterity 5}})
+(def c-int (comp :intelligence :attributes))
+(def c-str (comp :strength :attributes))
+(def c-dex (comp :dexterity :attributes))
+
+(c-int character)
+; 10
+(c-str character)
+; 4
+(c-dex character)
+; 5
+
+; alternatively we could have written this as
+(fn [c] (:strength (:attributes c)))
+```
+
+If one of the functions we want to compose needs to take more than one argument we can wrap it in an anonymous function:
+
+```clojure
+(defn spell-slots
+    [char]
+    (int (inc (/ (c-int char) 2))))
+(spell-slots character)
+; 6 
+
+; and here's the same logic with comp
+(def spell-slots-comp (comp int inc #(/ % 2) c-int))
+```
+
+
+
 
 
 ## Chapter 6
