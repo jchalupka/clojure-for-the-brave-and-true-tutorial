@@ -1154,9 +1154,31 @@ If one of the functions we want to compose needs to take more than one argument 
 (def spell-slots-comp (comp int inc #(/ % 2) c-int))
 ```
 
+#### memoize
 
+This allows clojure to remember the result of a particular function call.  This is particularily useful for function that take a lot of time to run.
 
+```clojure
+(defn sleepy-identity
+	"Returns the given value after 1 second"
+	[x]
+	(Thread/sleep 1000)
+	x)
+(sleepy-identity "Mr. Fantastico")
+; returns "Mr. Fantastic" after 1 second
+```
 
+We can create a memoized version of sleepy-identity:
+
+```clojure
+(defn memo-sleepy-identity (memoize sleepy-identity))
+(memo-sleepy-identity "Hello World")
+; returns "Hello World" after 1 second
+(memo-sleepy-identity "Hello World")
+; returns "Hello World" immediantly
+```
+
+Then the second call will no longer incur the one second wait.  We can see this would be useful for slow connections requests, or for functions which are computationaly expensive.
 
 ## Chapter 6
 
