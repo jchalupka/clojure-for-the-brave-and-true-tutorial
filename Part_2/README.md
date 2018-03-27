@@ -1180,7 +1180,200 @@ We can create a memoized version of sleepy-identity:
 
 Then the second call will no longer incur the one second wait.  We can see this would be useful for slow connections requests, or for functions which are computationaly expensive.
 
-## Chapter 6
+## Chapter 6 Organizing Your Project: A Librarian's Tale
+
+### Your Project as a Library
+
+Think of clojure as storing objects (like data structures and functions) in a vast set of numbered shelves.  No human being could know offhand which shelf an object is stored in.  Instead we give clojure an identifier that it uses to retrieve the object.  It does this association using namespaces, which can be thought of as maps between human friendly symbols and references to shelf addresses.
+
+`(ns-name *ns*)`
+
+Will show us the current namespace.
+
+### Storing Objects with def
+
+```clojure
+(def great-books ["East of Eden" "The Glass Bead Game"])
+; #'user/great-books
+
+great-books
+; ["East of Eden" "The Glass Bead Game"]
+```
+
+This process of defining variables is called *interning* a var.  You can interact with a namespace's map of symbols to interned vars using `ns-interns`.  
+
+```clojure
+(ns-interns *ns*)
+; {great-books #'user/great-books}
+
+; This is just a normal map
+(get (ns-interns *ns*) 'great-books)
+; #'user/great-books
+
+; The deref function can then be used to dereference this pointer
+(deref #'user/great-books)
+; ["East of Eden" "The Glass Bead Game"]
+
+; or
+(deref (get (ns-interns *ns*) 'great-books))
+; ["East of Eden" "The Glass Bead Game"]
+
+; or just use the symbol
+great-books
+; ["East of Eden" "The Glass Bead Game"]
+```
+
+If we define great-books again, this will result in a name collision and the variable will be overwritten.  Using namespaces allows us to avoid this, and the potential errors it will bring.
+
+### Creating And Switching Namespaces
+
+There are three tools for creating namespaces in clojure:
+
+- create-ns (function)
+- in-ns (function)
+- ns (macro)
+
+We will mostly use ns in our clojure files. 
+
+#### create-ns
+
+Takes a symbol, creates a namespace with that name if it doesn't exist already, and returns the namespace.
+
+```clojure
+(create-ns 'cheese.taxonomy)
+; #<Namespace cheese.taxonomy>
+
+; Usage
+(ns-name (create-ns 'cheese.taxonomy))
+; cheese.taxonomy
+```
+
+However create-ns is not very common to use because it is unlikely to create a namespace and then not immediantly use it.
+
+#### in-ns
+
+It is more common to use in-ns, which creates a namespace if it doesn't exist and switches to it.
+
+```clojure
+(in-ns 'cheese.analysis)
+; #<Namespace cheese.analysis>
+```
+
+To use functions and data from other namespaces use the fully qualified symbol.  The geneeral form is `namespace/name`
+
+```clojure
+(in-ns 'cheese.taxonomy)
+(def cheddars ["mild" "medium" "strong"])
+(in-ns 'cheese.analysis)
+
+cheddars
+; Exception: Unable to resolve symbold :cheddars
+
+cheese.taxonomy/cheddars
+; ["mild" "medium" "strong"]
+```
+
+But is there some way to tell clojure which objects to give me without specifying the fully qualified name?  Of course, into refer and alias.
+
+### refer
+
+Calling refer with a namespace symbol lets you refer to the corresponding namespace's objects without having to use fully qualified symbols.  It does this by updating the namespace's sumbol/object map.  You can see the new entries like this:
+
+```clojure
+; some data
+(in-ns 'cheese.taxonomy)
+(def cheddars ["mild" "medium" "strong" "sharp" "extra sharp"])
+(def bries ["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"])
+(in-ns 'cheese.analysis)
+(clojure.core/refer 'cheese.taxonomy)
+
+(clojure.core/get (clojure.core/ns-map clojure.core/*ns*) 'bries)
+; #'cheese.taxonomy/bries
+
+(clojure.core/get (clojure.core/ns-map clojure.core/*ns*) 'cheddars)
+; #'cheese.taxonomy/cheddars
+```
+
+It's as if clojure:
+
+1. calls ns-inters on the cheese.taxonomy namespace
+2. Merges that with the ns-map of the current namespace
+3. Makes the result the new ns-map of the current namespace
+
+When you call refer, you can also pass it the filters :only, :exclude, and :rename. 
+
+```clojure
+(clojure.core/refer 'cheese.taxonomy :only ['bries])
+bries ; works
+cheddars ;error
+
+(clojure.core/refer 'cheese.taxonomy :rename {'bries 'yummy-bries})
+yummy-bries ; works
+```
+
+Note that we don't need to write clojure.core becore things like clojure.core/ns-map.  This is because the REPL automaticlly refers clojure.core withing the user namespace.  
+
+Use namespaces to group related functions and data together.  Clojure allows you to define private functions (only accessable to other functions within the same namespace) using defn-:
+
+```clojure
+(in-ns 'cheese.analysis)
+(defn- private-function
+    "A private function"
+    ; does private things
+    )
+```
+
+### alias
+
+Alias shortens a namespace name for using fully qualified symbols:
+
+```clojure
+(alias 'taxonomy 'cheese.taxonomy)
+taxonomy/bries ; bries
+```
+
+### Real Project Organization
+
+#### Relationship Between File Paths and Namespace Names
+
+In clojure there is a one to one relationship between a namespace name and the path of the file where the namespace is declared.
+
+#### Requiring and Using Namespaces
+
+Think of require as telling clojure the following:
+
+1. Do nothing if you've already called require with this symbol
+2. Otherwise, find the file that corresponds to this symbol (using the rules defined above).
+3. Read and evaluate the contents of that file.
+
+Instead of using alias, we can use `:as`:
+
+```clojure
+(require '[the-divine-cheese-code.visualization.svg :as svg])
+```
+
+Or to automatically require and then refer a namespace use `use`:
+
+```clojure
+(use '[the-divine-cheese-code.visualization.svg :as svg])
+
+; we can also use :only, :exclude, etc
+(use '[the-divine-cheese-code.visualization.svg :as svg :only [points]])
+```
+
+### The ns Macro
+
+The ns macro allows you to use the tools described so far succinctly and provides other useful functionality.  One useful task ns does is refer the clojure.core namespace by default.  You can control what is refered using `:refer-clojure :exclude`or :only etc.
+
+You can also require:
+
+```clojure
+(ns the-divine-cheese-code.core
+  (:require [the-divine-cheese-code.visualization.svg :as svg]
+            [clojure.java.browse :as browse]))
+```
+
+
 
 ## Chapter 7
 
